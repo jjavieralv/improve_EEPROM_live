@@ -15,13 +15,13 @@
         - <a href="#2.1.3 Espacio vacio">2.1.3 Espacio vacio</a>
     + <a href="#2.2 Organización de estas estructuras">2.2 Organización de estas estructuras</a>
         - <a href="#2.2.1 Organizacion de la memoria">2.2.1 Organizacion de la memoria</a>
-            + <a href="#2.2.1.1 Tamaño espacio reservado:">2.2.1.1 Tamaño espacio reservado</a>
-            + <a href="#2.2.1.2 Tamaño de las estructuras:">2.2.1.2 Tamaño de las estructuras</a>
+            + <a href="#2.2.1.1 Tamaño espacio reservado">2.2.1.1 Tamaño espacio reservado</a>
+            + <a href="#2.2.1.2 Tamaño de las estructuras">2.2.1.2 Tamaño de las estructuras</a>
     + <a href="#2.3 Explicación de cómo funciona el algoritmo">2.3 Explicación de cómo funciona el algoritmo</a>
     + <a href="#2.4 Ejemplos de mejora frente a sistemas tradicionales">2.4 Ejemplos de mejora frente a sistemas tradicionales</a>
         - <a href="#2.4.1 Escribiendo pocos valores">2.4.1 Escribiendo pocos valores</a>
-            + <a href="#2.4.1.1 ANTIGUO: Dividiendo la memoria en 3 partes">2.4.1.1 ANTIGUO: Dividiendo la memoria en 3 partes</a>
-            + <a href="#2.4.1.2 NUEVO: Actualización dinámica de memoria">2.4.1.2 NUEVO: Actualización dinámica de memoria</a>
+            + <a href="#2.4.1.1 ANTIGUO. Dividiendo la memoria en 3 partes">2.4.1.1 ANTIGUO: Dividiendo la memoria en 3 partes</a>
+            + <a href="#2.4.1.2 NUEVO. Actualización dinámica de memoria">2.4.1.2 NUEVO: Actualización dinámica de memoria</a>
             + <a href="#2.4.1.3 Resumen escribiendo 1 valor">2.4.1.3 Resumen escribiendo 1 valor</a>
 <a href="#"></a>
 
@@ -255,7 +255,7 @@ Imaginemos que tenemos una memoria EEPROM, con capacidad para 1000 Bytes y que a
 ### 2.4.1 Escribiendo pocos valores
 Muchas veces estas memorias se utilizan para guardar tan solo un puñado de valores entre reinicios. Por ello vamos a hacer la cuenta por ejemplo para escribir un valor tipo int(4Bytes). 
 
-<a name="2.4.1.1 ANTIGUO: Dividiendo la memoria en 3 partes"></a>
+<a name="2.4.1.1 ANTIGUO. Dividiendo la memoria en 3 partes"></a>
 #### 2.4.1.1 ANTIGUO: Dividiendo la memoria en 3 partes
 En este ejemplo vamos a dividir la memoria en 3 partes, cada una de ellas con un contador. Una vez que el contador de una parte alcance el valor 100.000, pasaremos al siguiente bloque. Dejándonos por lo tanto:
 
@@ -265,7 +265,7 @@ La memoria restante será la que podamos usar, en total 991 Bytes. Al ser 3 bloq
 
 Si escribimos un valor, por ejemplo un int(4 Bytes) y lo reescribimos constantemente, (lees y escribes siempre un valor de memoria fijada) podremos escribir este valor 100.000 veces. Pasamos al bloque 2, escribimos otras 100.000. Pasamos al bloque 3, otras 100.000 escrituras. Por lo tanto podemos escribir 1 valor int 300.000 veces hasta que la memoria quede inútil
 
-<a name="2.4.1.2 NUEVO: Actualización dinámica de memoria"></a>
+<a name="2.4.1.2 NUEVO. Actualización dinámica de memoria"></a>
 #### 2.4.1.2 NUEVO: Actualización dinámica de memoria
 Para que sea más fácil comparar, voy a hacer las cuentas dejando para tener el mismo espacio de datos que permitía el ejemplo anterior 330Bytes.
 
@@ -296,11 +296,3 @@ Usamos 1 estructura, que puede ir pasando por 165 segmentos, en cada segmento se
 
 Escribiendo un valor tenemos una mejora del 2745,6%. 
 Para pocos valores almacenados el nuevo método presenta una increible mejora.
-
-
-
-
-
-
-
-
