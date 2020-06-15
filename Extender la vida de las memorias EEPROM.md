@@ -1,12 +1,46 @@
 # Extender la vida de las memorias EEPROM
 
+## 0. Índice
 
+[2.1 Organizacion de la memoria](## 2.1 Organizacion de la memoria)
+
+[ejemplo](#2.4.1.2 NUEVO: Actualización dinámica de memoria)
+
+- <a href="#1. Presentación">1. Presentación</a>
+    + <a href="#1.1 ¿Qué son las memorias EEPROM?">1.1 ¿Qué son las memorias EEPROM?</a>
+    + <a href="#1.2 Caracteristicas de EEPROM">1.2 Caracteristicas de EEPROM</a>
+    + <a href="#1.3 Soluciones y fallos actuales al problema">1.3 Soluciones y fallos actuales al problema</a>
+- <a href="#2. Mi propuesta de algoritmo para aumentar la vida de las EEPROM">2. Mi propuesta de algoritmo para aumentar la vida de las EEPROM</a>
+    + <a href="#2.1 Organizacion de la memoria">2.1 Organizacion de la memoria</a>
+        - <a href="#2.1.1 Información de la organización de la memoria">2.1.1 Información de la organización de la memoria</a>
+        - <a href="#2.1.2 Segmentos de la memoria">2.1.2 Segmentos de la memoria</a>
+            + <a href="#2.1.2.1 Indicador de estado">2.1.2.1 Indicador de estado</a>
+            + <a href="#2.1.2.2 ID. Identificador de estructura">2.1.2.2 ID. Identificador de estructura</a>
+            + <a href="#2.1.2.3 Espacio para datos">2.1.2.3 Espacio para datos</a>
+        - <a href="#2.1.3 Espacio vacio">2.1.3 Espacio vacio</a>
+    + <a href="#2.2 Organización de estas estructuras">2.2 Organización de estas estructuras</a>
+        - <a href="#2.2.1 Organizacion de la memoria">2.2.1 Organizacion de la memoria</a>
+            + <a href="#2.2.1.1 Tamaño espacio reservado:">2.2.1.1 Tamaño espacio reservado</a>
+            + <a href="#2.2.1.2 Tamaño de las estructuras:">2.2.1.2 Tamaño de las estructuras</a>
+    + <a href="#2.3 Explicación de cómo funciona el algoritmo">2.3 Explicación de cómo funciona el algoritmo</a>
+    + <a href="#2.4 Ejemplos de mejora frente a sistemas tradicionales">2.4 Ejemplos de mejora frente a sistemas tradicionales</a>
+        - <a href="#2.4.1 Escribiendo pocos valores">2.4.1 Escribiendo pocos valores</a>
+            + <a href="#2.4.1.1 ANTIGUO: Dividiendo la memoria en 3 partes">2.4.1.1 ANTIGUO: Dividiendo la memoria en 3 partes</a>
+            + <a href="#2.4.1.2 NUEVO: Actualización dinámica de memoria">2.4.1.2 NUEVO: Actualización dinámica de memoria</a>
+            + <a href="#2.4.1.3 Resumen escribiendo 1 valor">2.4.1.3 Resumen escribiendo 1 valor</a>
+<a href="#"></a>
+
+
+
+<a name="1. Presentación"></a>
 ## 1. Presentación
 Lo primero será poner en situación dando un breve resumen de que son estas memorias, cuáles son sus carácterísticas, soluciones actuales, etc. Con el fin de lograr una mayor comprensión. 
 
+<a name="1.1 ¿Qué son las memorias EEPROM?"></a>
 ## 1.1 ¿Qué son las memorias EEPROM?
 EEPROM (Electrically Erasable Programmable Read-Only Memory) es un tipo de memoria no volatil (no se pierden aunque falte alimentación o el sistema se reinicie) que permite almacenar datos. Este tipo de memorias son ámpliamente utilizadas en electrónica debido a su bajo coste y utilidad. 
 
+<a name="1.2 Caracteristicas de EEPROM"></a>
 ## 1.2 Caracteristicas de EEPROM
 Cabe destacar las siguientes caracteristicas de este tipo de memorias:
 	- Estan compuestas por partes llamadas células, usualmente de 1 byte
@@ -17,7 +51,7 @@ Cabe destacar las siguientes caracteristicas de este tipo de memorias:
 De un vistazo a las características podemos ver que es un problema que la escritura reduzca la vida útil. Si una célula ha sido reescrita un gran numero de veces, los datos almacenados en esta corren el riesgo de corromperse. Debido a esto se han desarrolado diversos algoritmos para evitar trabajar con datos corruptos. Estos algoritmos son llamados **wear-leveling algorithms**. 
 Se va a considerar que las EEPROM vienen con todos sus bits a 0 para facilitar las explicaciones.
 
-
+<a name="1.3 Soluciones y fallos actuales al problema"></a>
 ## 1.3 Soluciones y fallos actuales al problema
 1.  Dividir la memoria en partes, usar una hasta la saciedad y pasar a la siguiente
 
@@ -32,11 +66,12 @@ Se va a considerar que las EEPROM vienen con todos sus bits a 0 para facilitar l
 
 	Se usa cuando tan solo se quiere tener un contador que incrementa. Cada vez que se quiere actualizar el contador, el valor se guarda en la siguiente posición del array. Cuando el sistema se inicia, recorre el array y toma el valor mayor. 
 	Explicado en el siguiente [enlace](https://embeddedgurus.com/stack-overflow/2017/07/eeprom-wear-leveling/)
-	
-# 2. Mi propuesta de algoritmo para aumentar la vida de las EEPROM
 
+<a name="2. Mi propuesta de algoritmo para aumentar la vida de las EEPROM"></a>
+# 2. Mi propuesta de algoritmo para aumentar la vida de las EEPROM
 La alternativa que propongo consite en que los datos no estarán en una  posición fija, si no que siempre que se quiera hacer una escritura se hará sobre el espacio que tenga menos escrituras realizadas. El usuario no se debe preocupar de la organización interna, ya que será el programa el que realice todo el proceso. Además se implementarán técnicas ya conocidas como la comparación del valor a escribir con el escrito para evitar reescrituras innecesarias a nivel de bit. 
 
+<a name="2.1 Organizacion de la memoria"></a>
 ## 2.1 Organizacion de la memoria
 Tras ser inicializada, la memoria va a estar compuesta por 3 partes:
 
@@ -44,6 +79,7 @@ Tras ser inicializada, la memoria va a estar compuesta por 3 partes:
     b. Segmentos para almacenar información
     c. Espacio vacío
 
+<a name="2.1.1 Información de la organización de la memoria"></a>
 ### 2.1.1 Información de la organización de la memoria
 Las primeras direcciones de memoria pasan a estar reservadas para información de la memoria:
 
@@ -53,6 +89,7 @@ Las primeras direcciones de memoria pasan a estar reservadas para información d
 - **rd**: Cantidad máxima posible de estructuras(maximo valor de ID)
 - **re**: Tamaño reservado para almacenar los datos en cada estructura
 
+<a name="2.1.2 Segmentos de la memoria"></a>
 ### 2.1.2 Segmentos de la memoria
 Hay que dividir la memoria en segmentos del tamaño de las estructuras, pudiendo cada segmento contener o no una estructura. Cada segmento va a tener un indicador de estado al comienzo, este parte tendrá un tamaño indicado en valor(ra[1]). Cada segmento puede contener una estructura, la cual esta compuesta por:
 
@@ -63,23 +100,28 @@ Por lo tanto cada segmento que contenga una estructura va a tener el formato
 | Indicador de estado | ID estrucutra | Espacio para datos |
 | -- | -- | -- |
 
+<a name="2.1.2.1 Indicador de estado"></a>
 #### 2.1.2.1 Indicador de estado
 Este valor indica el estado en el que se encuentra ese segmento de la memoria. El estado nos indica no solo si ese segmento de la memoria contiene información válida o inválida, si no tambien cuántas escrituras se han hecho sobre esa parte con el fin de que el número de escrituras sea lo más uniforme posible a lo largo de toda la memoria. El valor máximo del indicador de estado se almacena en **rb**, pudiendo tomar todos los valores entre 0 y este valor, pero siempre siendo un valor impar para lograr un número par de estados. Los estados impares indican que esa parte esta ocupada por información válida, mientras que los valores impares indican que esa parte esta ocupada por información inválida. Además los estados son cíclicos, lo que significa que una vez que se alcanza el último estado, se vuelve al primero, pero se incrementa el contador de vueltas **rc** en 1. Por ejemplo, si **rb** vale 3, los estados podrán ser 0,1,2,3. El estado 0 y 2 indicarían que ese segmento puede ser sobreescrito, mientras que el 1 y el 3 indicarían que ese segmento contiene datos válidos, y por lo tanto no deber ser sobreescrito. Tenemos que recordar que el indicador de estado se actualiza tanto cuando se escribe un dato como cuando se "libera" el segmento, por lo tanto cuando hayamos recorrido en el ejemplo los 4 estados, habremos actualizado el valor 2 veces, pero hemos atacado a la memoria escribiendo 4 veces.
 
+<a name="2.1.2.2 ID. Identificador de estructura"></a>
 #### 2.1.2.2 ID. Identificador de estructura
 Cada estructura que creemos va a tener asignado un valor que será usado como identificador único de esa estructura. Estos valores van a ser asingados de manera incremental en 1, desde el 0 hasta el máximo indicado (almacenado en **rd**). Las estructuras no tienen por que estar ordenadas en la memoria, pero cada estructura siempre será identificable gracias a su identificador único.
 
+<a name="2.1.2.3 Espacio para datos"></a>
 #### 2.1.2.3 Espacio para datos
 Cada estructura contiene un número de celdas, idicado en el valor **re**, que será usado para almacenar los datos. En caso de que se quieran almacenar datos de una longitud mayor a la capacidad de almacenamiento de una éstructura no habrá problema, ya que se pueden ir creando estructuras de manera consecutiva para almacenar ese dato. 
 
+<a name="2.1.3 Espacio vacio"></a>
 ### 2.1.3 Espacio vacio
 Es el espacio que aún no ha sido utilizado por ninguna estructura. Aún asi, lo interpretaremos como si estuviese dividido en segmentos, y puesto que esos segmentos no se han utilizado nunca, su indicador de estado valdrá 0. 
 
+<a name="2.2 Organización de estas estructuras"></a>
 ## 2.2 Organización de estas estructuras
 Una vez que ya tenemos claro cómo va a estar estructurada la memoria, paso a explicar como van a estar gestionadas estas estructuras. Por comodidad y facilidad de explición, se van a usar células completas, aunque en muchos casos se pueda optimizar usando un tamaño menor. En el ejemplo se ha supuesto que la memoria ya estaba estructurada. Más tarde se indicará como inicializar la memoria en caso de que no lo esté.
 
+<a name="2.2.1 Organizacion de la memoria"></a>
 ### 2.2.1 Organizacion de la memoria
-
 Para poder hacer esto primero vamos a aclarar algunas variables fijas. 
 Los tamaños van a ser de ejemplo.
 
@@ -89,7 +131,8 @@ Tamaño memoria:
 - Tamaño reservado para información **(TRI)**: ra + rb + rc + rd + re = 9 Bytes
 - Tamaño usable para segmentos **(TU)**: TM - TRI = 1015 Bytes
 
-#### 2.2.1.1 Tamaño espacio reservado:
+<a name="2.2.1.1 Tamaño espacio reservado"></a>
+#### 2.2.1.1 Tamaño espacio reservado
 
 - **ra** : 5 Bytes. Siempre será este valor.
 - **rb** : 1 Byte. Valor impar siempre acaba en 1. En el ejemplo toma valor 3, por lo que el estado puede ser(0,1,2,3)
@@ -103,8 +146,8 @@ Ejemplo de composición del espacio reservado con los parámetros anteriores:
 | -- | -- | -- | -- | -- |
 | 01001010‬ 00000001 00000001 00000001 00000001| 00000011 | 00000000 | ‭00111100‬ | 00000100 |
 
-#### 2.2.1.2 Tamaño de las estructuras:
-
+<a name="2.2.1.2 Tamaño de las estructuras"></a>
+#### 2.2.1.2 Tamaño de las estructuras
 - Tamaño estructura individual(ID+estado+datos) **(TE)**: valor(ra[3]) + valor(ra[1]) + valor (re)
 
 Tan solo podremos crear estructuras diferentes hasta llenar la memoria. Sabiendo el tamaño de la memoria, el tamaño reservado para la información al principio y el tamaño de cada estructura. Podremos saber cuántas estructuras diferentes podermos crear. Por simplificar, vamos a hacer la cuenta usando células completas. Para hacer esto hacemos los siguientes cálculos incrementando la i hasta que la condición se cumpla con el mayor valor de i: 
@@ -116,6 +159,7 @@ Ejemplo de composición de las estructuras individuales(ejemplo primera estructu
 | -- | -- | -- |
 | 00000001 | 00000000 | 00000000 00000000 00000000 00000000 |
 
+<a name="2.3 Explicación de cómo funciona el algoritmo"></a>
 ## 2.3 Explicación de cómo funciona el algoritmo
 Ahora que ya tenemos claras las partes de las que va a estar compuesta la memoria, y el significado de cada una, procedo a explicar cómo funciona el algoritmo. 
 
@@ -208,13 +252,16 @@ Como podemos ver, todas las estructuras tienen su ID único, por lo que se puede
 
 Este saca su mayor potencial si el número máximo de estructuras es menor al número máximo de segmentos disponibles. 
 
-## 2.4 Ejemplos de mejora frente a sistemas tradicionales.
+<a name="2.4 Ejemplos de mejora frente a sistemas tradicionales"></a>
+## 2.4 Ejemplos de mejora frente a sistemas tradicionales
 Imaginemos que tenemos una memoria EEPROM, con capacidad para 1000 Bytes y que a partir de las 100.000 los datos pueden corromperse. Vamos a ver una comparativa de los 2 métodos en diferentes circunstancias, junto con un resumen final. 
 
+<a name="2.4.1 Escribiendo pocos valores"></a>
 ### 2.4.1 Escribiendo pocos valores
 Muchas veces estas memorias se utilizan para guardar tan solo un puñado de valores entre reinicios. Por ello vamos a hacer la cuenta por ejemplo para escribir un valor tipo int(4Bytes). 
 
-#### 2.4.1.1 ANTIGUO: Dividiendo la memoria en 3 partes.
+<a name="2.4.1.1 ANTIGUO: Dividiendo la memoria en 3 partes"></a>
+#### 2.4.1.1 ANTIGUO: Dividiendo la memoria en 3 partes
 En este ejemplo vamos a dividir la memoria en 3 partes, cada una de ellas con un contador. Una vez que el contador de una parte alcance el valor 100.000, pasaremos al siguiente bloque. Dejándonos por lo tanto:
 
 3 Bytes por cada contador (para poder contar hasta 100.000), por lo que el sistema usa 9 bytes en total de la memoria.
@@ -223,6 +270,7 @@ La memoria restante será la que podamos usar, en total 991 Bytes. Al ser 3 bloq
 
 Si escribimos un valor, por ejemplo un int(4 Bytes) y lo reescribimos constantemente, (lees y escribes siempre un valor de memoria fijada) podremos escribir este valor 100.000 veces. Pasamos al bloque 2, escribimos otras 100.000. Pasamos al bloque 3, otras 100.000 escrituras. Por lo tanto podemos escribir 1 valor int 300.000 veces hasta que la memoria quede inútil
 
+<a name="2.4.1.2 NUEVO: Actualización dinámica de memoria"></a>
 #### 2.4.1.2 NUEVO: Actualización dinámica de memoria
 Para que sea más fácil comparar, voy a hacer las cuentas dejando para tener el mismo espacio de datos que permitía el ejemplo anterior 330Bytes.
 
@@ -242,8 +290,9 @@ Cada vez que damos una vuelta a los 256 estados, es por que en ese segmento hemo
 
 Usamos 1 estructura, que puede ir pasando por 165 segmentos, en cada segmento se puede escribir 128 veces por vuelta y para cumplir las 100.000 escrituras tenemos que dar 390 vueltas. Por lo tanto:
 
-1*165*128*390= 8.236.800
+1* 165* 128* 390= 8.236.800
 
+<a name="2.4.1.3 Resumen escribiendo 1 valor"></a>
 #### 2.4.1.3 Resumen escribiendo 1 valor
 | Método | Nº valores guardados | Tamaño de esos valores | Escrituras hasta inutil |
 | -- | -- | -- | -- |
@@ -252,8 +301,6 @@ Usamos 1 estructura, que puede ir pasando por 165 segmentos, en cada segmento se
 
 Escribiendo un valor tenemos una mejora del 2745,6%. 
 Para pocos valores almacenados el nuevo método presenta una increible mejora.
-
-
 
 
 
