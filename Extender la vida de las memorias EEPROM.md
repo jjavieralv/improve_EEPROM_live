@@ -19,7 +19,7 @@
             + <a href="#2.2.1.2 Tamaño de las estructuras">2.2.1.2 Tamaño de las estructuras</a>
     + <a href="#2.3 Explicación de cómo funciona el algoritmo">2.3 Explicación de cómo funciona el algoritmo</a>
     + <a href="#2.4 Ejemplos de mejora frente a sistemas tradicionales">2.4 Ejemplos de mejora frente a sistemas tradicionales</a>
-        - <a href="#2.4.1 Escribiendo pocos valores">2.4.1 Escribiendo pocos valores</a>
+        - <a href="#2.4.1 Escribiendo un solo valor">2.4.1 Escribiendo un solo valor</a>
             + <a href="#2.4.1.1 ANTIGUO. Dividiendo la memoria en 3 partes">2.4.1.1 ANTIGUO: Dividiendo la memoria en 3 partes</a>
             + <a href="#2.4.1.2 NUEVO. Actualización dinámica de memoria">2.4.1.2 NUEVO: Actualización dinámica de memoria</a>
             + <a href="#2.4.1.3 Resumen escribiendo 1 valor">2.4.1.3 Resumen escribiendo 1 valor</a>
@@ -257,8 +257,8 @@ Este saca su mayor potencial si el número máximo de estructuras es menor al n�
 ## 2.4 Ejemplos de mejora frente a sistemas tradicionales
 Imaginemos que tenemos una memoria EEPROM, con capacidad para 1000 Bytes y que a partir de las 100.000 los datos pueden corromperse. Vamos a ver una comparativa de los 2 métodos en diferentes circunstancias, junto con un resumen final. 
 
-<a name="2.4.1 Escribiendo pocos valores"></a>
-### 2.4.1 Escribiendo pocos valores
+<a name="2.4.1 Escribiendo un solo valor"></a>
+### 2.4.1 Escribiendo un solo valor
 Muchas veces estas memorias se utilizan para guardar tan solo un puñado de valores entre reinicios. Por ello vamos a hacer la cuenta por ejemplo para escribir un valor tipo int(4Bytes). 
 
 <a name="2.4.1.1 ANTIGUO. Dividiendo la memoria en 3 partes"></a>
@@ -302,3 +302,38 @@ Usamos 1 estructura, que puede ir pasando por 165 segmentos, en cada segmento se
 
 Escribiendo un valor tenemos una mejora del 2745,6%. 
 Para pocos valores almacenados el nuevo método presenta una increible mejora.
+
+<a name="2.4.2 Escribiendo más valore"></a>
+### 2.4.2 Escribiendo más valores
+Con el fin de acercarse a un caso más realista, ahora vamos a simular que se escriben datos en el segmento entero, es decir, que los 330Bytes estan completos de datos útiles. Y que todos los valores se actualizan de media por igual (puede que unos se actualicen mucho y otros muy poco). Vamos a llenar la memoria con datos tipo int (4Bytes) y puesto que la memoria son 330Bytes, podremos guardar aproximadamente 82 datos diferentes
+
+<a name="2.4.2.1 ANTIGUO. Llenando el tercio de la memoria al completo"></a>
+#### 2.4.2.1 ANTIGUO: Llenando el tercio de la memoria al completo
+Los cálculos del tamaño disponible son identicos al apartado 2.4.1.1. Dejándonos con 9Bytes guardados para los contadores, la memoria restante dividida en 3 bloques de 330Bytes. 
+
+Tal como se dice en en punto 2.4.2, los datos a guardar son enteros, que tienen una longityd de 4Bytes, y por ello podemos guardar 82 valores distintos.
+
+Cada vez que realizamos una escritura en ese bloque, el contador se incrementa en 1. Por lo tanto, para llenar todo el bloque, el contador se ha incrementado en 82. Del mismo modo, para actualizar todo el bloque, el contador se incrementa en 82 por reescribir todos los valores. 
+
+Si sabemos que se pueden hacer unas 100.000 escrituras, tendremos que podremos actualizar el bloque completo un total de 1.219 (100.000/82) veces antes de que quede inservible. Despues copiaríamos todos los datos al siguiente bloque y podríamos actualizar 1.218 veces(consumimos 1 escritura al tener que copiar los valores de un bloque al siguiente). Y repetimos con el tercero.
+
+Con esto nos queda que podemos actualizar el bloque entero un total de 1.219 + 1.218 + 1.218 = 3655 veces antes de que la memoria quede inservible
+
+<a name="2.4.2.2 NUEVO. Actualización dinámica de memoria más valores"></a>
+#### 2.4.2.2 NUEVO. Actualización dinámica de memoria más valores
+Los cálculos del tamaño son identicos a los del apartado 2.4.1.2. Dejándonos con que cada segmento ocupa 6Bytes, vamos a tener 256 posibles estados, un total de 165 segmentos a utilizar, de los cuales son necesarios usar 82 en estructuras para alojar todos los valores, y vamos a poder dar 390 vueltas al contador para alcanzar las 100.000 escrituras (100.000/256).
+
+Con esto vemos que usamos 82 segmentos y nos quedan 83 libres (vamos a dejarlo en 82 tambien para que sea más simple de explicar). Osea que en la memoria podemos alojar esas 82 estructuras 2 veces, en la primera mitad y luego en la segunda mitad. Al igual que antes, cada segmento pasa por los 256 estados, pero solo se actualiza el valor en 128, (los otras 128 veces que cambia el estado es para indicar que el segmento se puede sobreescribir). Este ciclo de estados lo podemos repetir 390 veces. Por lo tanto:
+
+2 posiciones* 128actualizaciones en cada ciclo* 390ciclos= 99.840 actualizaciones del bloque de 330Bytes.
+
+<a name="2.4.2.3 Resumen escribiendo más valores"></a>
+#### 2.4.2.3 Resumen escribiendo más valores
+| Método | Nº valores guardados | Tamaño de esos valores | Escrituras hasta inutil |
+| -- | -- | -- | -- |
+| Antiguo | 82 | 4Bytes | 3.655 |
+| Nuevo | 82 | 4Bytes | 99.840 |
+
+Llenando el bloque al completo tenemos una mejora del 2.731 %. Indicandonos que para hacer lo mismo, el sistema nuevo hace con 1 memoria lo que con el antiguo necesitaríamos más de 27 memorias.
+
+
