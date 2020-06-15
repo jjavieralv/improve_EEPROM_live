@@ -1,11 +1,6 @@
 # Extender la vida de las memorias EEPROM
 
 ## 0. Índice
-
-[2.1 Organizacion de la memoria](## 2.1 Organizacion de la memoria)
-
-[ejemplo](#2.4.1.2 NUEVO: Actualización dinámica de memoria)
-
 - <a href="#1. Presentación">1. Presentación</a>
     + <a href="#1.1 ¿Qué son las memorias EEPROM?">1.1 ¿Qué son las memorias EEPROM?</a>
     + <a href="#1.2 Caracteristicas de EEPROM">1.2 Caracteristicas de EEPROM</a>
