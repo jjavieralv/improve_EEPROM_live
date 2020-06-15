@@ -23,6 +23,10 @@
             + <a href="#2.4.1.1 ANTIGUO. Dividiendo la memoria en 3 partes">2.4.1.1 ANTIGUO: Dividiendo la memoria en 3 partes</a>
             + <a href="#2.4.1.2 NUEVO. Actualización dinámica de memoria">2.4.1.2 NUEVO: Actualización dinámica de memoria</a>
             + <a href="#2.4.1.3 Resumen escribiendo 1 valor">2.4.1.3 Resumen escribiendo 1 valor</a>
+        - <a href="#2.4.2 Escribiendo más valore">2.4.2 Escribiendo más valore</a>
+            + <a href="#2.4.2.1 ANTIGUO. Llenando el tercio de la memoria al completo">2.4.2.1 ANTIGUO. Llenando el tercio de la memoria al completo</a>
+            + <a href="#2.4.2.2 NUEVO. Actualización dinámica de memoria más valores">2.4.2.2 NUEVO. Actualización dinámica de memoria más valores</a>
+            + <a href="#2.4.2.3 Resumen escribiendo más valores">2.4.2.3 Resumen escribiendo más valores</a>
 <a href="#"></a>
 
 
