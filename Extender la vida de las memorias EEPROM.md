@@ -15,13 +15,13 @@
         - <a href="#2.1.3 Espacio vacio">2.1.3 Espacio vacio</a>
     + <a href="#2.2 Organización de estas estructuras">2.2 Organización de estas estructuras</a>
         - <a href="#2.2.1 Organizacion de la memoria">2.2.1 Organizacion de la memoria</a>
-            + <a href="#2.2.1.1 Tamaño espacio reservado:">2.2.1.1 Tamaño espacio reservado</a>
-            + <a href="#2.2.1.2 Tamaño de las estructuras:">2.2.1.2 Tamaño de las estructuras</a>
+            + <a href="#2.2.1.1 Tamaño espacio reservado">2.2.1.1 Tamaño espacio reservado</a>
+            + <a href="#2.2.1.2 Tamaño de las estructuras">2.2.1.2 Tamaño de las estructuras</a>
     + <a href="#2.3 Explicación de cómo funciona el algoritmo">2.3 Explicación de cómo funciona el algoritmo</a>
     + <a href="#2.4 Ejemplos de mejora frente a sistemas tradicionales">2.4 Ejemplos de mejora frente a sistemas tradicionales</a>
         - <a href="#2.4.1 Escribiendo pocos valores">2.4.1 Escribiendo pocos valores</a>
-            + <a href="#2.4.1.1 ANTIGUO: Dividiendo la memoria en 3 partes">2.4.1.1 ANTIGUO: Dividiendo la memoria en 3 partes</a>
-            + <a href="#2.4.1.2 NUEVO: Actualización dinámica de memoria">2.4.1.2 NUEVO: Actualización dinámica de memoria</a>
+            + <a href="#2.4.1.1 ANTIGUO. Dividiendo la memoria en 3 partes">2.4.1.1 ANTIGUO: Dividiendo la memoria en 3 partes</a>
+            + <a href="#2.4.1.2 NUEVO. Actualización dinámica de memoria">2.4.1.2 NUEVO: Actualización dinámica de memoria</a>
             + <a href="#2.4.1.3 Resumen escribiendo 1 valor">2.4.1.3 Resumen escribiendo 1 valor</a>
 <a href="#"></a>
 
@@ -38,11 +38,11 @@ EEPROM (Electrically Erasable Programmable Read-Only Memory) es un tipo de memor
 <a name="1.2 Caracteristicas de EEPROM"></a>
 ## 1.2 Caracteristicas de EEPROM
 Cabe destacar las siguientes caracteristicas de este tipo de memorias:
-	- Estan compuestas por partes llamadas células, usualmente de 1 byte
-	- Escritura muy lento (1byte 3.3ms)
-	- El proceso de escritura daña las células reduciendo su vida útil (entre 100k y 1M aproximadamente)
-	- Lectura rapida (1024 bytes 0.3ms)
-	- El proceso de lectura no daña a las células
+    - Estan compuestas por partes llamadas células, usualmente de 1 byte
+    - Escritura muy lento (1byte 3.3ms)
+    - El proceso de escritura daña las células reduciendo su vida útil (entre 100k y 1M aproximadamente)
+    - Lectura rapida (1024 bytes 0.3ms)
+    - El proceso de lectura no daña a las células
 De un vistazo a las características podemos ver que es un problema que la escritura reduzca la vida útil. Si una célula ha sido reescrita un gran numero de veces, los datos almacenados en esta corren el riesgo de corromperse. Debido a esto se han desarrolado diversos algoritmos para evitar trabajar con datos corruptos. Estos algoritmos son llamados **wear-leveling algorithms**. 
 Se va a considerar que las EEPROM vienen con todos sus bits a 0 para facilitar las explicaciones.
 
@@ -50,7 +50,7 @@ Se va a considerar que las EEPROM vienen con todos sus bits a 0 para facilitar l
 ## 1.3 Soluciones y fallos actuales al problema
 1.  Dividir la memoria en partes, usar una hasta la saciedad y pasar a la siguiente
 
-	Usualmente para las memorias EEPROM este problema se soluciona dividiendo la memoria en bloques grandes, supongamos que se divide por la mitad(como se suele hace usualmente). Se empieza a utilizar la primera mitad creando en una parte de esta un contador. Ese contador se incrementa cada vez que se realiza una escritura. Cuando el contador alcanza un valor en el que no se puede garantizar la integridad de los valores almacenados (como hemos dicho antes 100k aproximadamente), el bloque entero pasa a ser inservible, se copian todos los datos de la primera mitad a la segunda y se inicia en esta un nuevo contador. Cuando este contador, al igual que con el anterior, alcanza un valor en el que no se pueden garantizar la integridad de los datos almacenados, el bloque pasa a ser considerado inservible. Ya que hemos usado las 2 mitades, la memoria pasa a ser considerada como inservible o imposible de asegurar su integridad. Esto falla en:
+    Usualmente para las memorias EEPROM este problema se soluciona dividiendo la memoria en bloques grandes, supongamos que se divide por la mitad(como se suele hace usualmente). Se empieza a utilizar la primera mitad creando en una parte de esta un contador. Ese contador se incrementa cada vez que se realiza una escritura. Cuando el contador alcanza un valor en el que no se puede garantizar la integridad de los valores almacenados (como hemos dicho antes 100k aproximadamente), el bloque entero pasa a ser inservible, se copian todos los datos de la primera mitad a la segunda y se inicia en esta un nuevo contador. Cuando este contador, al igual que con el anterior, alcanza un valor en el que no se pueden garantizar la integridad de los datos almacenados, el bloque pasa a ser considerado inservible. Ya que hemos usado las 2 mitades, la memoria pasa a ser considerada como inservible o imposible de asegurar su integridad. Esto falla en:
 
         a. No se puede usar toda la memoria a la vez
         b. No se hacen escrituras de manera uniformes dentro del mismo bloque
@@ -59,8 +59,8 @@ Se va a considerar que las EEPROM vienen con todos sus bits a 0 para facilitar l
 
 2.  Uso de matrices para valores incrementales.
 
-	Se usa cuando tan solo se quiere tener un contador que incrementa. Cada vez que se quiere actualizar el contador, el valor se guarda en la siguiente posición del array. Cuando el sistema se inicia, recorre el array y toma el valor mayor. 
-	Explicado en el siguiente [enlace](https://embeddedgurus.com/stack-overflow/2017/07/eeprom-wear-leveling/)
+    Se usa cuando tan solo se quiere tener un contador que incrementa. Cada vez que se quiere actualizar el contador, el valor se guarda en la siguiente posición del array. Cuando el sistema se inicia, recorre el array y toma el valor mayor. 
+    Explicado en el siguiente [enlace](https://embeddedgurus.com/stack-overflow/2017/07/eeprom-wear-leveling/)
 
 <a name="2. Mi propuesta de algoritmo para aumentar la vida de las EEPROM"></a>
 # 2. Mi propuesta de algoritmo para aumentar la vida de las EEPROM
@@ -83,6 +83,11 @@ Las primeras direcciones de memoria pasan a estar reservadas para información d
 - **rc**: Veces que el indicador de estado se ha reiniciado
 - **rd**: Cantidad máxima posible de estructuras(maximo valor de ID)
 - **re**: Tamaño reservado para almacenar los datos en cada estructura
+*[ra]:Array que indica cuanto espacio ocuparan rb, rc, rd y re
+*[rb]:Valor máximo del indicador de estado
+*[rc]:Veces que el contador se ha reiniciado
+*[rd]:cantidad máxima de estructuras
+*[re]:Tamaño para datos en cada estructura
 
 <a name="2.1.2 Segmentos de la memoria"></a>
 ### 2.1.2 Segmentos de la memoria
@@ -95,6 +100,7 @@ Por lo tanto cada segmento que contenga una estructura va a tener el formato
 | Indicador de estado | ID estrucutra | Espacio para datos |
 | -- | -- | -- |
 
+*[ID]:Identificador único de cada estructura
 <a name="2.1.2.1 Indicador de estado"></a>
 #### 2.1.2.1 Indicador de estado
 Este valor indica el estado en el que se encuentra ese segmento de la memoria. El estado nos indica no solo si ese segmento de la memoria contiene información válida o inválida, si no tambien cuántas escrituras se han hecho sobre esa parte con el fin de que el número de escrituras sea lo más uniforme posible a lo largo de toda la memoria. El valor máximo del indicador de estado se almacena en **rb**, pudiendo tomar todos los valores entre 0 y este valor, pero siempre siendo un valor impar para lograr un número par de estados. Los estados impares indican que esa parte esta ocupada por información válida, mientras que los valores impares indican que esa parte esta ocupada por información inválida. Además los estados son cíclicos, lo que significa que una vez que se alcanza el último estado, se vuelve al primero, pero se incrementa el contador de vueltas **rc** en 1. Por ejemplo, si **rb** vale 3, los estados podrán ser 0,1,2,3. El estado 0 y 2 indicarían que ese segmento puede ser sobreescrito, mientras que el 1 y el 3 indicarían que ese segmento contiene datos válidos, y por lo tanto no deber ser sobreescrito. Tenemos que recordar que el indicador de estado se actualiza tanto cuando se escribe un dato como cuando se "libera" el segmento, por lo tanto cuando hayamos recorrido en el ejemplo los 4 estados, habremos actualizado el valor 2 veces, pero hemos atacado a la memoria escribiendo 4 veces.
@@ -255,7 +261,7 @@ Imaginemos que tenemos una memoria EEPROM, con capacidad para 1000 Bytes y que a
 ### 2.4.1 Escribiendo pocos valores
 Muchas veces estas memorias se utilizan para guardar tan solo un puñado de valores entre reinicios. Por ello vamos a hacer la cuenta por ejemplo para escribir un valor tipo int(4Bytes). 
 
-<a name="2.4.1.1 ANTIGUO: Dividiendo la memoria en 3 partes"></a>
+<a name="2.4.1.1 ANTIGUO. Dividiendo la memoria en 3 partes"></a>
 #### 2.4.1.1 ANTIGUO: Dividiendo la memoria en 3 partes
 En este ejemplo vamos a dividir la memoria en 3 partes, cada una de ellas con un contador. Una vez que el contador de una parte alcance el valor 100.000, pasaremos al siguiente bloque. Dejándonos por lo tanto:
 
@@ -265,7 +271,7 @@ La memoria restante será la que podamos usar, en total 991 Bytes. Al ser 3 bloq
 
 Si escribimos un valor, por ejemplo un int(4 Bytes) y lo reescribimos constantemente, (lees y escribes siempre un valor de memoria fijada) podremos escribir este valor 100.000 veces. Pasamos al bloque 2, escribimos otras 100.000. Pasamos al bloque 3, otras 100.000 escrituras. Por lo tanto podemos escribir 1 valor int 300.000 veces hasta que la memoria quede inútil
 
-<a name="2.4.1.2 NUEVO: Actualización dinámica de memoria"></a>
+<a name="2.4.1.2 NUEVO. Actualización dinámica de memoria"></a>
 #### 2.4.1.2 NUEVO: Actualización dinámica de memoria
 Para que sea más fácil comparar, voy a hacer las cuentas dejando para tener el mismo espacio de datos que permitía el ejemplo anterior 330Bytes.
 
@@ -296,11 +302,3 @@ Usamos 1 estructura, que puede ir pasando por 165 segmentos, en cada segmento se
 
 Escribiendo un valor tenemos una mejora del 2745,6%. 
 Para pocos valores almacenados el nuevo método presenta una increible mejora.
-
-
-
-
-
-
-
-
